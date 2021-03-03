@@ -18,17 +18,15 @@ Si on a envoyé le formulaire, on va essayer de l'insérer dans la DB
 if(!empty($_POST)){
 
     // on retire les espaces à l'avant et à l'arrière du texte
-    $leNom = trim($_POST['nom']);
+    $leNom = trim($_POST['themessagesname']);
     // on empèche les attaques par scripts, et toutes les balises html etc...
     $leNom = strip_tags($leNom);
     // on va convertir les caractères spéciaux en entités html avec le ' et le " compris
     $leNom = htmlspecialchars($leNom,ENT_QUOTES);
 
     // Même chose que leNom en une seule ligne
-    $leMessage = htmlspecialchars(strip_tags(trim($_POST['message'])),ENT_QUOTES);
+    $leMessage = htmlspecialchars(strip_tags(trim($_POST['themessagestext'])),ENT_QUOTES);
 
-    // conversion en entier, si attaque se transforme en 0
-    $leGenre = (int) $_POST['genre'];
 
     // on vérifie si nos résultats sont vides
     if(empty($leNom)||empty($leMessage)){
@@ -36,10 +34,9 @@ if(!empty($_POST)){
     // sinon on insère dans la DB    
     }else{
 
-        // Manque email et date
 
-        mysqli_query($db,"INSERT INTO messages (nom,commentaire,genre,date) 
-        VALUES ('$leNom','$leMessage',$leGenre,CURRENT_TIMESTAMP)")or die(mysqli_error($db)); 
+        mysqli_query($db,"INSERT INTO themessages (themessagesname,themessagestext) 
+        VALUES ('$leNom','$leMessage')")or die(mysqli_error($db)); 
 
     }
 
@@ -47,12 +44,12 @@ if(!empty($_POST)){
 
 
 /*
-Récupération des commentaires
+Récupération des messages
 */
 
     // on va récupérer tous les messages de la table "messages" 
     // par date descendante et ensuite par ID desc (pour le même jour, on respecte l'ordre)
-    $recupDatas = mysqli_query($db,"SELECT * FROM messages ORDER BY date DESC, id DESC");
+    $recupDatas = mysqli_query($db,"SELECT * FROM themessages ORDER BY themessagesdate DESC, idthemessages DESC");
 
     // on transforme le résultat en tableau associatif
     $datas = mysqli_fetch_all($recupDatas,MYSQLI_ASSOC);
@@ -69,13 +66,8 @@ Récupération des commentaires
     <h1>Accueil livre d'or</h1>
     <h3>ICI le formulaire</h3>
     <form name="livredor" method="post" action="">
-    <input type="text" name="nom" required placeholder="Votre Nom"><br>
-    <textarea name="message" required placeholder="Votre message"></textarea><br>
-    <select name="genre" required>
-        <option value="1">Femme</option>
-        <option value="0">Homme</option>
-        <option value="2">Non genré</option>
-    </select><br>
+    <input type="text" name="themessagesname" required placeholder="Votre Nom"><br>
+    <textarea name="themessagestext" required placeholder="Votre message"></textarea><br>
     <input type="submit" value="Poster votre commentaire">
     <?php 
     if(isset($erreur)) echo $erreur;
@@ -84,8 +76,8 @@ Récupération des commentaires
     <h3>Vos messages</h3>
     <?php
 foreach($datas as $item){
-    echo "<h4>Ecrit par {$item['nom']} Le {$item['date']}</h4>";
-    echo "<p>{$item['commentaire']}</p>";
+    echo "<h4>Ecrit par {$item['themessagesname']} Le {$item['themessagesdate']}</h4>";
+    echo "<p>{$item['themessagestext']}</p>";
 }
     ?>
 </body>
