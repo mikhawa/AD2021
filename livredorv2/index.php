@@ -27,11 +27,15 @@ if (!empty($_POST)) {
     // Même chose que leNom en une seule ligne
     $leMessage = htmlspecialchars(strip_tags(trim($_POST['themessagestext'])), ENT_QUOTES);
 
+    // si le captcha de Google n'a pas été coché
+    if(empty($_POST['g-recaptcha-response'])||strlen($_POST['g-recaptcha-response'])!=462){
+        $erreur = "Etes-vous un robot?";
 
-    // on vérifie si nos résultats sont vides
-    if (empty($leNom) || empty($leMessage)) {
+    // on vérifie si nos résultats sont vides    
+    }elseif (empty($leNom) || empty($leMessage)) { 
         $erreur = "Vos champs ne peuvent être vides!";
-        // sinon on insère dans la DB    
+
+    // sinon on insère dans la DB    
     } else {
 
 
@@ -69,6 +73,18 @@ $nbMessages = mysqli_num_rows($recupDatas);
     <link rel="canonical" href="">
     <link rel="icon" type="image/x-icon" href="img/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <!-- reCaptcha v2 -->
+    <script type="text/javascript">
+      var onloadCallback = function() {
+        grecaptcha.render('html_element', {
+          'sitekey' : '6Lcn5G8aAAAAAJiyFkfQPXprBmU30wW0z-qdSUjR',
+          'callback' : verifyCallback,
+        });
+        var verifyCallback = function(response) {
+        alert(response);
+      };
+      };
+    </script>
 </head>
 
 <body>
@@ -85,14 +101,14 @@ $nbMessages = mysqli_num_rows($recupDatas);
                 <textarea name="themessagestext" id="themessagestext" placeholder="Votre message" minlength="3" maxlength="550"  required ></textarea>
             </div>
             <div>
-                <?php if(isset($erreur)) echo "<h3>Votre contenu n'est pas accepté!</h3>" ; ?>
+                <?php if(isset($erreur)) echo "<h3>$erreur</h3>" ; ?>
             </div>
+            <div id="html_element"></div>
             <div>
                 <button type="submit" name="commit">Envoyer</button>
             </div>
             
         </fieldset>
-        
     </form>
     <h2>Vos messages</h2>
     <p>Nombre de message: <?=$nbMessages?></p>
@@ -102,6 +118,10 @@ $nbMessages = mysqli_num_rows($recupDatas);
         echo "<p>{$item['themessagestext']}</p><hr>";
     }
     ?>
+    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+        async defer>
+    </script>
+
 </body>
 
 </html>
