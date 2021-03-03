@@ -51,6 +51,10 @@ $recupDatas = mysqli_query($db, "SELECT * FROM themessages ORDER BY themessagesd
 
 // on transforme le résultat en tableau associatif
 $datas = mysqli_fetch_all($recupDatas, MYSQLI_ASSOC);
+
+// on récupère le nombre de messages
+$nbMessages = mysqli_num_rows($recupDatas);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -81,13 +85,17 @@ $datas = mysqli_fetch_all($recupDatas, MYSQLI_ASSOC);
                 <textarea name="themessagestext" id="themessagestext" placeholder="Votre message" minlength="3" maxlength="550"  required ></textarea>
             </div>
             <div>
+                <?php if(isset($erreur)) echo "<h3>Votre contenu n'est pas accepté!</h3>" ; ?>
+            </div>
+            <div>
                 <button type="submit" name="commit">Envoyer</button>
             </div>
             
         </fieldset>
         
     </form>
-    <h3>Vos messages</h3>
+    <h2>Vos messages</h2>
+    <p>Nombre de message: <?=$nbMessages?></p>
     <?php
     foreach ($datas as $item) {
         echo "<h4>Ecrit par {$item['themessagesname']} Le {$item['themessagesdate']}</h4>";

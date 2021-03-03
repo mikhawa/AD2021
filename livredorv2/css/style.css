@@ -1,5 +1,10 @@
 /* Ajouter un style au titre principal (balise H1) */
 h1 {
+    color: rgb(7, 2, 32);
+}
+
+/* Ajouter un style au titre principal (balise H3 pour les erreurs) */
+h3 {
     color: red;
 }
 
