@@ -30,3 +30,6 @@ Dans la DB livredor2
 2 champs sont obligatoires :
 - themessagesname (VARCHAR 60)
 - themessagestext (VARCHAR 600)
+
+Nous mettrons vos livres d'or à cette adresse:
+https://ad2021.webdev-cf2m.be/

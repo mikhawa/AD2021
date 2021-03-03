@@ -4,7 +4,7 @@
 // Appel des constantes permettant la connexion à la DB
 require_once "config.php";
 
-// Connexion à la DB
+// Connexion à la DB en mysqli procédural
 $db = mysqli_connect(DB_HOST, DB_USER, DB_PWD, DB_NAME, DB_PORT);
 
 // on met notre connexion au format utf8
@@ -31,13 +31,12 @@ if (!empty($_POST)) {
     if(empty($_POST['g-recaptcha-response'])||strlen($_POST['g-recaptcha-response'])!=462){
         $erreur = "Etes-vous un robot?";
 
-    // on vérifie si nos résultats sont vides    
+    // on vérifie si au moins un de nos résultat est vide    
     }elseif (empty($leNom) || empty($leMessage)) { 
         $erreur = "Vos champs ne peuvent être vides!";
 
     // sinon on insère dans la DB    
     } else {
-
 
         mysqli_query($db, "INSERT INTO themessages (themessagesname,themessagestext) 
         VALUES ('$leNom','$leMessage')") or die(mysqli_error($db));
@@ -51,7 +50,7 @@ Récupération des messages
 
 // on va récupérer tous les messages de la table "messages" 
 // par date descendante et ensuite par ID desc (pour le même jour, on respecte l'ordre)
-$recupDatas = mysqli_query($db, "SELECT * FROM themessages ORDER BY themessagesdate DESC, idthemessages DESC");
+$recupDatas = mysqli_query($db, "SELECT * FROM themessages ORDER BY themessagesdate DESC") or die(mysqli_error($db));
 
 // on transforme le résultat en tableau associatif
 $datas = mysqli_fetch_all($recupDatas, MYSQLI_ASSOC);
@@ -81,8 +80,8 @@ $nbMessages = mysqli_num_rows($recupDatas);
           'callback' : verifyCallback,
         });
         var verifyCallback = function(response) {
-        alert(response);
-      };
+            alert(response);
+        };
       };
     </script>
 </head>
@@ -123,5 +122,4 @@ $nbMessages = mysqli_num_rows($recupDatas);
     </script>
 
 </body>
-
 </html>
